@@ -59,6 +59,8 @@ def extract_conjunctiva(st1):
     data = []
     lab_image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2LAB)
     for i in range(image1.shape[0]):
+        if i%10==0:
+            print(i)
         for j in range(image1.shape[1]):
             if image1[i, j, 0] < 254:
                 if image1[i, j, 1] < 254:
@@ -87,6 +89,8 @@ def extract_nailbed(st2):
     data = []
     lab_image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2LAB)
     for i in range(image2.shape[0]):
+        if i%10==0:
+            print(i)
         for j in range(image2.shape[1]):
             if image2[i, j, 0] < 254:
                 if image2[i, j, 1] < 254:
@@ -112,6 +116,7 @@ def extract_fingertip(st3):
     i = 0
     while ret and i < 165:
         ret, frame = video1.read()
+        print(i)
         if ret:
             lab_image = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
             Lstar, astar, bstar = cv2.split(lab_image)
