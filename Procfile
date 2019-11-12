@@ -1,1 +1,1 @@
-GUNICORN_CMD_ARGS="--timeout 300" web: gunicorn app:app
+web: gunicorn app:app
