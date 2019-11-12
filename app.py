@@ -5,6 +5,9 @@ from sklearn.preprocessing import StandardScaler
 import model as functions
 import pickle
 import os
+from rq import Queue
+from worker import conn
+from utils import count_words_at_url
 
 
 
@@ -15,6 +18,7 @@ classifier3 = pickle.load(open('model3.pkl', 'rb'))
 UPLOAD_FOLDER = "static/upload"
 ALLOWED_EXTENSIONS = {'jpg', 'mp4'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+q = Queue(connection=conn)
 
 
 @app.route('/')
@@ -43,12 +47,13 @@ def predict():
                 if image == 'fingertip':
                     st3 = st3 + '/' + file_name
         scaler = StandardScaler()
-        print(st1)
-        print(st2)
-        print(st3)
+        new_job = q.enqueue(count_words_at_url, 'http://heroku.com')
         Xc_test = np.array(functions.extract_conjunctiva(st1)).reshape(1, -1)
+        new_job = q.enqueue(count_words_at_url, 'http://heroku.com')
         Xu_test = np.array(functions.extract_nailbed(st2)).reshape(1, -1)
+        new_job = q.enqueue(count_words_at_url, 'http://heroku.com')
         Xp_test = np.array(functions.extract_fingertip(st3)).reshape(1, -1)
+        new_job = q.enqueue(count_words_at_url, 'http://heroku.com')
         scaler.fit(Xc_test)
         scaler.fit(Xp_test)
         scaler.fit(Xu_test)
