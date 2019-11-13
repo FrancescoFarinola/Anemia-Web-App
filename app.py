@@ -25,13 +25,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def extract(st1,st2,st3):
-    Xc_test = np.array(functions.extract_conjunctiva(st1)).reshape(1, -1)
-    Xu_test = np.array(functions.extract_nailbed(st2)).reshape(1, -1)
-    Xp_test = np.array(functions.extract_fingertip(st3)).reshape(1, -1)
-    return Xc_test, Xu_test, Xp_test
-
-
 @app.route('/predict', methods=['GET','POST'])
 def predict():
     st1 = UPLOAD_FOLDER
@@ -50,7 +43,9 @@ def predict():
                 if image == 'fingertip':
                     st3 = st3 + '/' + file_name
         scaler = StandardScaler()
-        Xc_test, Xu_test, Xp_test = q.enqueue(extract,st1,st2,st3)
+        Xc_test = np.array(q.enqueue(functions.extract_conjunctiva,st1)).reshape(1, -1)
+        Xu_test = np.array(q.enqueue(functions.extract_nailbed,st2)).reshape(1, -1)
+        Xp_test = np.array(q.enqueue(functions.extract_fingertip,st3)).reshape(1, -1)
         scaler.fit(Xc_test)
         scaler.fit(Xp_test)
         scaler.fit(Xu_test)
