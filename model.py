@@ -59,6 +59,8 @@ def extract_conjunctiva(st1):
     data = []
     lab_image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2LAB)
     for i in range(image1.shape[0]):
+        if i%10==0:
+            print(i)
         for j in range(image1.shape[1]):
             if image1[i, j, 0] < 254:
                 if image1[i, j, 1] < 254:
@@ -87,6 +89,8 @@ def extract_nailbed(st2):
     data = []
     lab_image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2LAB)
     for i in range(image2.shape[0]):
+        if i%10==0:
+            print(i)
         for j in range(image2.shape[1]):
             if image2[i, j, 0] < 254:
                 if image2[i, j, 1] < 254:
@@ -112,6 +116,7 @@ def extract_fingertip(st3):
     i = 0
     while ret and i < 165:
         ret, frame = video1.read()
+        print(i)
         if ret:
             lab_image = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
             Lstar, astar, bstar = cv2.split(lab_image)
@@ -170,23 +175,3 @@ def bordaCount(scores1, scores2, scores3, prob1, prob2, prob3):
 
         score = score + " with " + str(prob) + "% probability"
         return score
-
-def predict(st1,st2,st3):
-    scaler = StandardScaler()
-    Xc_test = np.array(extract_conjunctiva(st1)).reshape(1, -1)
-    Xu_test = np.array(extract_nailbed(st2)).reshape(1, -1)
-    Xp_test = np.array(extract_fingertip(st3)).reshape(1, -1)
-    scaler.fit(Xc_test)
-    scaler.fit(Xp_test)
-    scaler.fit(Xu_test)
-    classifier1 = pickle.load(open('model1.pkl', 'rb'))
-    classifier2 = pickle.load(open('model2.pkl', 'rb'))
-    classifier3 = pickle.load(open('model3.pkl', 'rb'))
-    scores1 = classifier1.predict(Xc_test)
-    prob1 = classifier1.predict_proba(Xc_test)
-    scores2 = classifier2.predict(Xp_test)
-    prob2 = classifier2.predict_proba(Xp_test)
-    scores3 = classifier3.predict(Xu_test)
-    prob3 = classifier3.predict_proba(Xu_test)
-    score = bordaCount(scores1, scores2, scores3, prob1, prob2, prob3)
-    return score
