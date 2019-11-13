@@ -170,3 +170,23 @@ def bordaCount(scores1, scores2, scores3, prob1, prob2, prob3):
 
         score = score + " with " + str(prob) + "% probability"
         return score
+
+def predict(st1,st2,st3):
+    scaler = StandardScaler()
+    Xc_test = np.array(extract_conjunctiva(st1)).reshape(1, -1)
+    Xu_test = np.array(extract_nailbed(st2)).reshape(1, -1)
+    Xp_test = np.array(extract_fingertip(st3)).reshape(1, -1)
+    scaler.fit(Xc_test)
+    scaler.fit(Xp_test)
+    scaler.fit(Xu_test)
+    classifier1 = pickle.load(open('model1.pkl', 'rb'))
+    classifier2 = pickle.load(open('model2.pkl', 'rb'))
+    classifier3 = pickle.load(open('model3.pkl', 'rb'))
+    scores1 = classifier1.predict(Xc_test)
+    prob1 = classifier1.predict_proba(Xc_test)
+    scores2 = classifier2.predict(Xp_test)
+    prob2 = classifier2.predict_proba(Xp_test)
+    scores3 = classifier3.predict(Xu_test)
+    prob3 = classifier3.predict_proba(Xu_test)
+    score = bordaCount(scores1, scores2, scores3, prob1, prob2, prob3)
+    return score
