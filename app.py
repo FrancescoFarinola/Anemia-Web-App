@@ -5,8 +5,8 @@ from sklearn.preprocessing import StandardScaler
 import model as functions
 import pickle
 import os
-
-
+from rq import Queue
+from worker import conn
 
 app = Flask(__name__)
 classifier1 = pickle.load(open('model1.pkl', 'rb'))
@@ -15,7 +15,7 @@ classifier3 = pickle.load(open('model3.pkl', 'rb'))
 UPLOAD_FOLDER = "static/upload"
 ALLOWED_EXTENSIONS = {'jpg', 'mp4'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+q = Queue(connection=conn)
 
 @app.route('/')
 def home():
@@ -24,6 +24,13 @@ def home():
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def extract(st1,st2,st3):
+    Xc_test = np.array(functions.extract_conjunctiva(st1)).reshape(1, -1)
+    Xu_test = np.array(functions.extract_nailbed(st2)).reshape(1, -1)
+    Xp_test = np.array(functions.extract_fingertip(st3)).reshape(1, -1)
+    return Xc_test, Xu_test, Xp_test
+
 
 @app.route('/predict', methods=['GET','POST'])
 def predict():
@@ -43,12 +50,7 @@ def predict():
                 if image == 'fingertip':
                     st3 = st3 + '/' + file_name
         scaler = StandardScaler()
-        Xc_test = np.array(functions.extract_conjunctiva(st1)).reshape(1, -1)
-        print("Extracted conjuntiva")
-        Xu_test = np.array(functions.extract_nailbed(st2)).reshape(1, -1)
-        print("Extracted nailbed")
-        Xp_test = np.array(functions.extract_fingertip(st3)).reshape(1, -1)
-        print("Extracted fingertip")
+        Xc_test, Xu_test, Xp_test = q.enqueue(extract,st1,st2,st3)
         scaler.fit(Xc_test)
         scaler.fit(Xp_test)
         scaler.fit(Xu_test)
@@ -64,4 +66,4 @@ def predict():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
