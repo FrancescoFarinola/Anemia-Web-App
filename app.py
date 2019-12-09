@@ -40,10 +40,10 @@ def predict():
         images = request.files.to_dict() #salva in un dict i file del form HTML
         for image in images: #per ogni immagine
             #se la filesize è stata presa dal cookie richiesto da JavaScript
-            if "filesize" in request.cookies:
-                if not allowed_image_filesize(request.cookies["filesize"]): #se supera le dim
-                    print("Filesize exceeded maximum limit")
-                    return redirect(request.url) #refresh pagina
+            #if "filesize" in request.cookies:
+                #if not allowed_image_filesize(request.cookies["filesize"]): #se supera le dim
+                   # print("Filesize exceeded maximum limit")
+                   # return redirect(request.url) #refresh pagina
             if image and allowed_file(images[image].filename): #se estensione ammessa
                 file_name = secure_filename(images[image].filename) #controlla nome file
                 images[image].save(os.path.join(app.config['UPLOAD_FOLDER'], file_name)) #salva file in upload
