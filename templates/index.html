@@ -153,11 +153,11 @@
          <form action="{{ url_for('predict')}}" method="POST" enctype="multipart/form-data">
              <div class="form-group">
             <label for="conjunctiva">Conjunctiva image: </label>
-            <span><input type="file" class="form-control" name="conjunctiva" id="conjunctiva" accept=".jpg"<!--oninput="filesize(this);"-->></span>
+            <span><input type="file" class="form-control" name="conjunctiva" id="conjunctiva" accept=".jpg"<!--oninput="filesize(this);"--></span>
             <label for="nailbed">Nailbed image: </label>
-            <span><input type="file" class="form-control" name="nailbed" id="nailbed" accept=".jpg"<!--oninput="filesize(this);"-->></span>
+            <span><input type="file" class="form-control" name="nailbed" id="nailbed" accept=".jpg"<!--oninput="filesize(this);"--></span>
             <label for="fingertip">Fingertip video: </label>
-            <span><input type="file" class="form-control" name="fingertip" id="fingertip" accept=".mp4" <!--oninput="filesize(this);"-->></span>
+            <span><input type="file" class="form-control" name="fingertip" id="fingertip" accept=".mp4" <!--oninput="filesize(this);"--></span>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
