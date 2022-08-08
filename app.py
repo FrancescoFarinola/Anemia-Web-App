@@ -2,7 +2,7 @@
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename, redirect
 from sklearn.preprocessing import StandardScaler
-import model as functions
+import model.model as functions
 import pickle
 import os
 from rq import Queue
